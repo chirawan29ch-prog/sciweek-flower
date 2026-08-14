@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>จองดอกไม้ให้กำลังใจ</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #FBF4F7; }
+  body { font-family: 'Prompt', sans-serif; }
+  button { font-family: inherit; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+<script crossorigin src="https://unpkg.com/qrcode-generator@2.0.4/dist/qrcode.js"></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useMemo } = React;
+
+function Icon({ children, size = 20, color = "currentColor", strokeWidth = 2, className = "" }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      {children}
+    </svg>
+  );
+}
+function Atom(props) {
+  return (
+    <Icon {...props}>
+      <ellipse cx="12" cy="12" rx="10" ry="4.2" />
+      <ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)" />
+      <ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)" />
+      <circle cx="12" cy="12" r="1.6" fill={props.color || "currentColor"} stroke="none" />
+    </Icon>
+  );
+}
+function Flower2(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="7" r="3" />
+      <circle cx="16.6" cy="9.5" r="3" />
+      <circle cx="16.6" cy="14.5" r="3" />
+      <circle cx="12" cy="17" r="3" />
+      <circle cx="7.4" cy="14.5" r="3" />
+      <circle cx="7.4" cy="9.5" r="3" />
+      <circle cx="12" cy="12" r="2" fill={props.color || "currentColor"} stroke="none" />
+    </Icon>
+  );
+}
+function QrCode(props) {
+  const fillC = props.color || "currentColor";
+  return (
+    <Icon {...props}>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="3" height="3" fill={fillC} stroke="none" />
+      <rect x="18" y="14" width="3" height="3" fill={fillC} stroke="none" />
+      <rect x="14" y="18" width="3" height="3" fill={fillC} stroke="none" />
+      <rect x="18" y="18" width="3" height="3" fill={fillC} stroke="none" />
+    </Icon>
+  );
+}
+function Wallet(props) {
+  return (
+    <Icon {...props}>
+      <path d="M3 7a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
+      <path d="M16 12h3" />
+    </Icon>
+  );
+}
+function CheckCircle2(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.3 12.3l2.5 2.5 5-5.6" />
+    </Icon>
+  );
+}
+function ArrowLeft(props) {
+  return (
+    <Icon {...props}>
+      <path d="M19 12H5" />
+      <path d="M11 18l-6-6 6-6" />
+    </Icon>
+  );
+}
+function ClipboardList(props) {
+  return (
+    <Icon {...props}>
+      <rect x="5" y="4" width="14" height="17" rx="2" />
+      <rect x="9" y="2" width="6" height="3" rx="1" />
+      <path d="M8 10h8M8 14h8M8 18h5" />
+    </Icon>
+  );
+}
+function Timer(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="13" r="8" />
+      <path d="M12 9v4l3 2" />
+      <path d="M9 2h6" />
+    </Icon>
+  );
+}
+function ChevronRight(props) {
+  return (
+    <Icon {...props}>
+      <path d="M9 6l6 6-6 6" />
+    </Icon>
+  );
+}
+function Sparkles(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 3l1.4 4.3L18 9l-4.6 1.7L12 15l-1.4-4.3L6 9l4.6-1.7L12 3Z" />
+      <path d="M19 15l.7 1.9L22 18l-2.3.8L19 21l-.7-1.9L16 18l2.3-.8L19 15Z" />
+    </Icon>
+  );
+}
+function RefreshCcw(props) {
+  return (
+    <Icon {...props}>
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+      <path d="M3 21v-5h5" />
+    </Icon>
+  );
+}
+function Settings(props) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 2.5v3M12 18.5v3M4.2 4.2l2.2 2.2M17.6 17.6l2.2 2.2M2.5 12h3M18.5 12h3M4.2 19.8l2.2-2.2M17.6 6.4l2.2-2.2" />
+    </Icon>
+  );
+}
+function Pencil(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z" />
+    </Icon>
+  );
+}
+function Plus(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 5v14M5 12h14" />
+    </Icon>
+  );
+}
+function Trash2(props) {
+  return (
+    <Icon {...props}>
+      <path d="M4 7h16" />
+      <path d="M10 11v6M14 11v6" />
+      <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12" />
+      <path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" />
+    </Icon>
+  );
+}
+function X(props) {
+  return (
+    <Icon {...props}>
+      <path d="M18 6L6 18M6 6l12 12" />
+    </Icon>
+  );
+}
+function ImagePlus(props) {
+  return (
+    <Icon {...props}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <circle cx="9" cy="10" r="2" />
+      <path d="M4 18l5-5 3 3 4-4 4 4" />
+      <path d="M17 4v5M14.5 6.5h5" />
+    </Icon>
+  );
+}
+function Lock(props) {
+  return (
+    <Icon {...props}>
+      <rect x="4" y="11" width="16" height="9" rx="2" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </Icon>
+  );
+}
+function Download(props) {
+  return (
+    <Icon {...props}>
+      <path d="M12 3v12" />
+      <path d="M7 10l5 5 5-5" />
+      <path d="M4 19h16" />
+    </Icon>
+  );
+}
+
+function crc16ccitt(str) {
+  let crc = 0xffff;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = crc & 0x8000 ? ((crc << 1) ^ 0x1021) & 0xffff : (crc << 1) & 0xffff;
+    }
+  }
+  return crc & 0xffff;
+}
+function ppTlv(tag, value) {
+  return tag + String(value.length).padStart(2, "0") + value;
+}
+function ppSanitize(id) {
+  return String(id || "").replace(/[^0-9]/g, "");
+}
+function ppFormatTarget(id) {
+  const n = ppSanitize(id);
+  if (n.length >= 13) return n;
+  return ("0000000000000" + n.replace(/^0/, "66")).slice(-13);
+}
+function ppTargetTag(id) {
+  const n = ppSanitize(id);
+  if (n.length >= 15) return "03";
+  if (n.length >= 13) return "02";
+  return "01";
+}
+function buildPromptPayPayload(target, amount) {
+  if (!target) return null;
+  const merchantInfo = ppTlv("00", "A000000677010111") + ppTlv(ppTargetTag(target), ppFormatTarget(target));
+  const parts = [
+    ppTlv("00", "01"),
+    ppTlv("01", amount ? "12" : "11"),
+    ppTlv("29", merchantInfo),
+    ppTlv("58", "TH"),
+    ppTlv("53", "764"),
+    amount ? ppTlv("54", Number(amount).toFixed(2)) : "",
+  ];
+  const body = parts.join("");
+  const toCrc = body + "6304";
+  const crcHex = crc16ccitt(toCrc).toString(16).toUpperCase().padStart(4, "0");
+  return body + "6304" + crcHex;
+}
+
+const C = {
+  kraft: "#FBF4F7",
+  kraftDark: "#EBD3E0",
+  paper: "#FFFFFF",
+  paperLight: "#FFFFFF",
+  ink: "#332F3B",
+  inkSoft: "#8B8594",
+  green: "#4FA8D6",
+  greenDark: "#2D6E96",
+  pink: "#E8759F",
+  purple: "#9B6FD1",
+  blue: "#5B8FC7",
+  amber: "#E3A64F",
+  ctaCream: "#EFF9DB",
+  ctaSage: "#9CCEC1",
+  ctaTeal: "#309596",
+  bannerOrange: "#FFAC79",
+  bannerRose: "#FF7393",
+  bannerGlow: "#978AD9",
+};
+
+const FONT_DISPLAY = "'Mitr', sans-serif";
+const FONT_BODY = "'Prompt', sans-serif";
+const FONT_MONO = "'JetBrains Mono', monospace";
+
+const DEFAULT_PACKAGES = [
+  { id: "mini", name: "ดอกเดียวใจถึง", stems: 1, price: 39, desc: "ดอกไม้เดี่ยว ห่อกระดาษคราฟต์ ผูกริบบิ้นรีไซเคิล พร้อมการ์ดให้กำลังใจ", image: null },
+  { id: "standard", name: "กำลังใจฟูลบาน", stems: 3, price: 69, desc: "ช่อ 3 ดอก ห่อกระดาษคราฟต์ ผูกโบว์ พร้อมการ์ดให้กำลังใจ", image: null },
+  { id: "premium", name: "แชมป์ทุกเวที", stems: 5, price: 129, desc: "ช่อใหญ่ 5 ดอก พร้อมใบเฟิร์นตกแต่ง เหมาะมอบเป็นรางวัลพิเศษ", image: null },
+];
+
+const DEFAULT_SITE_TEXT = {
+  title: "จองดอกไม้ให้กำลังใจ",
+  subtitle: "สัปดาห์วิทยาศาสตร์ · ประกวดเดินแบบชุดรีไซเคิล",
+  announcement: "",
+  promptpayId: "1310600289040",
+  promptpayName: "นางสาวจิราวรรญ จันทจร",
+};
+
+const STEP_META = [
+  { key: "home", label: "เลือกดอกไม้" },
+  { key: "info", label: "ข้อมูลผู้จอง" },
+  { key: "payment", label: "ชำระเงิน" },
+  { key: "success", label: "เสร็จสิ้น" },
+];
+
+function genOrderCode(n) {
+  return `SC${String(n).padStart(3, "0")}`;
+}
+const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzajanW3C7zCGyaKOneGpkx68XKHyNWNeygKyJfLR4IX8vfb6_u6j3RF1i4rP2qkT2J/exec";
+
+async function logOrderToSheet(order) {
+  if (!GOOGLE_SHEET_WEBHOOK_URL || GOOGLE_SHEET_WEBHOOK_URL.includes("วาง URL")) return;
+  try {
+    await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({
+        code: order.code,
+        packageName: order.pkg.name,
+        qty: order.qty,
+        totalPrice: order.pkg.price * order.qty,
+        buyerName: order.form.name,
+        room: order.form.room,
+        phone: order.form.phone,
+        status: order.status,
+      }),
+    });
+  } catch (err) {
+    console.error("Google Sheet log failed", err);
+  }
+}
+function baht(n) {
+  return `฿${Number(n || 0).toLocaleString("th-TH")}`;
+}
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function roundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function dashedLine(ctx, x1, y1, x2, y2, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 6]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawQRToCanvas(ctx, text, x, y, box) {
+  const qr = qrcode(0, "M");
+  qr.addData(text);
+  qr.make();
+  const count = qr.getModuleCount();
+  const cell = box / count;
+  roundRectPath(ctx, x - 12, y - 12, box + 24, box + 24, 10);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+  ctx.strokeStyle = C.kraftDark;
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = C.ink;
+  for (let r = 0; r < count; r++) {
+    for (let c = 0; c < count; c++) {
+      if (qr.isDark(r, c)) ctx.fillRect(x + c * cell, y + r * cell, cell + 0.6, cell + 0.6);
+    }
+  }
+}
+async function downloadOrderReceipt(order) {
+  if (!order) return;
+  try {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+  } catch (e) {}
+
+  const scale = 2;
+  const W = 620, H = 780;
+  const canvas = document.createElement("canvas");
+  canvas.width = W * scale;
+  canvas.height = H * scale;
+  const ctx = canvas.getContext("2d");
+  ctx.scale(scale, scale);
+
+  ctx.fillStyle = C.kraft;
+  ctx.fillRect(0, 0, W, H);
+
+  const cardX = 30, cardY = 56, cardW = W - 60, cardH = H - 56 - 30;
+  roundRectPath(ctx, cardX, cardY, cardW, cardH, 22);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+  ctx.strokeStyle = C.kraftDark;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const mx = W / 2, my = cardY;
+  ctx.beginPath();
+  ctx.arc(mx, my, 22, 0, Math.PI * 2);
+  const grad = ctx.createLinearGradient(mx - 22, my - 22, mx + 22, my + 22);
+  grad.addColorStop(0, C.pink);
+  grad.addColorStop(1, C.blue);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.font = "22px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("🌸", mx, my + 2);
+
+  let y = cardY + 60;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = C.inkSoft;
+  ctx.font = "600 12px 'JetBrains Mono', monospace";
+  ctx.fillText("ใบยืนยันการจอง · ORDER RECEIPT", cardX + 28, y);
+
+  y += 46;
+  ctx.fillStyle = C.greenDark;
+  ctx.font = "700 36px 'JetBrains Mono', monospace";
+  ctx.fillText(order.code, cardX + 28, y);
+
+  y += 26;
+  dashedLine(ctx, cardX + 28, y, cardX + cardW - 28, y, C.kraftDark);
+  y += 40;
+
+  const rows = [
+    ["ช่อดอกไม้", `${order.pkg.name} ×${order.qty} (${order.pkg.stems * order.qty} ดอก)`],
+    ["ผู้จอง", `${order.form.name} · ${order.form.room}`],
+    ["ยอดชำระ", baht(order.pkg.price * order.qty)],
+  ];
+  rows.forEach(([label, value]) => {
+    ctx.textAlign = "left";
+    ctx.font = "13px 'Prompt', sans-serif";
+    ctx.fillStyle = C.inkSoft;
+    ctx.fillText(label, cardX + 28, y);
+    ctx.textAlign = "right";
+    ctx.font = "600 15px 'Prompt', sans-serif";
+    ctx.fillStyle = C.ink;
+    ctx.fillText(value, cardX + cardW - 28, y);
+    y += 34;
+  });
+
+  ctx.textAlign = "left";
+  ctx.font = "13px 'Prompt', sans-serif";
+  ctx.fillStyle = C.inkSoft;
+  ctx.fillText("สถานะ", cardX + 28, y);
+  const paid = order.status === "paid";
+  const badgeText = paid ? "ชำระแล้ว" : "รอชำระที่งาน";
+  ctx.font = "600 13px 'Prompt', sans-serif";
+  const badgeW = ctx.measureText(badgeText).width + 28;
+  const badgeH = 26;
+  const badgeX = cardX + cardW - 28 - badgeW;
+  const badgeY = y - badgeH + 6;
+  roundRectPath(ctx, badgeX, badgeY, badgeW, badgeH, badgeH / 2);
+  ctx.fillStyle = paid ? C.green : C.amber;
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.textAlign = "center";
+  ctx.fillText(badgeText, badgeX + badgeW / 2, badgeY + badgeH / 2 + 4);
+
+  y += 30;
+  ctx.textAlign = "left";
+  dashedLine(ctx, cardX + 28, y, cardX + cardW - 28, y, C.kraftDark);
+  y += 36;
+
+  const qrBox = 208;
+  drawQRToCanvas(ctx, order.code, W / 2 - qrBox / 2, y, qrBox);
+  y += qrBox + 42;
+
+  ctx.textAlign = "center";
+  ctx.font = "12px 'Prompt', sans-serif";
+  ctx.fillStyle = C.inkSoft;
+  ctx.fillText("เก็บภาพนี้ไว้ แสดงที่บูธรับดอกไม้", W / 2, y);
+  ctx.fillText("ในวันงานเพื่อรับช่อดอกไม้", W / 2, y + 18);
+
+  const link = document.createElement("a");
+  link.download = `order-${order.code}.png`;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+function Eyebrow({ children, color = C.inkSoft }) {
+  return (
+    <div className="uppercase mb-1" style={{ fontFamily: FONT_MONO, color, fontSize: 11, letterSpacing: "0.2em" }}>
+      {children}
+    </div>
+  );
+}
+
+function SectionBanner({ icon: IconComp, children, className = "" }) {
+  return (
+    <div
+      className={`relative flex items-center gap-2 px-5 py-2.5 text-white font-semibold text-sm rounded-full ${className}`}
+      style={{
+        background: `linear-gradient(180deg, ${C.bannerOrange}, ${C.bannerRose})`,
+        fontFamily: FONT_BODY,
+        boxShadow: `0 16px 26px -10px ${C.bannerGlow}aa, 0 6px 14px -6px ${C.bannerRose}55`,
+      }}
+    >
+      {IconComp && <IconComp size={16} className="shrink-0" />}
+      <span>{children}</span>
+    </div>
+  );
+}
+
+function PinnedCard({ children, rotate = 0, className = "", style = {} }) {
+  return (
+    <div
+      className={`relative rounded-md p-4 ${className}`}
+      style={{
+        background: C.paperLight,
+        border: `1.5px solid ${C.kraftDark}`,
+        transform: rotate ? `rotate(${rotate}deg)` : undefined,
+        boxShadow: `0 10px 22px -12px ${C.pink}55, 0 2px 8px -4px ${C.blue}44`,
+        ...style,
+      }}
+    >
+      <span
+        className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full flex items-center justify-center"
+        style={{ width: 26, height: 26, background: `linear-gradient(135deg, ${C.pink}, ${C.blue})`, boxShadow: `0 3px 8px ${C.pink}66` }}
+      >
+        <Flower2 size={13} color="#fff" strokeWidth={2.4} />
+      </span>
+      {children}
+    </div>
+  );
+}
+
+function StatusBadge({ status }) {
+  const paid = status === "paid";
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold"
+      style={{ fontFamily: FONT_BODY, color: "#fff", background: paid ? C.green : C.amber }}
+    >
+      {paid ? <CheckCircle2 size={13} /> : <Timer size={13} />}
+      {paid ? "ชำระแล้ว" : "รอชำระที่งาน"}
+    </span>
+  );
+}
+
+function ProgressSteps({ step }) {
+  const idx = STEP_META.findIndex((s) => s.key === (step === "qr" ? "payment" : step));
+  return (
+    <div className="flex items-center justify-between mb-5 px-1">
+      {STEP_META.map((s, i) => (
+        <React.Fragment key={s.key}>
+          <div className="flex flex-col items-center gap-1" style={{ width: 44 }}>
+            <div
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+              style={{
+                fontFamily: FONT_MONO,
+                background: i <= idx ? C.greenDark : C.paper,
+                color: i <= idx ? "#fff" : C.inkSoft,
+                border: `1.5px solid ${i <= idx ? C.greenDark : C.kraftDark}`,
+              }}
+            >
+              {i < idx ? <CheckCircle2 size={14} /> : i + 1}
+            </div>
+            <span className="text-center leading-tight" style={{ fontFamily: FONT_BODY, color: i <= idx ? C.ink : C.inkSoft, fontSize: 9 }}>
+              {s.label}
+            </span>
+          </div>
+          {i < STEP_META.length - 1 && (
+            <div className="flex-1 -mt-4" style={{ height: 2, background: i < idx ? C.green : C.kraftDark }} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+function RealQRCode({ text, size = 176 }) {
+  const modules = useMemo(() => {
+    if (!text) return null;
+    const qr = qrcode(0, "M");
+    qr.addData(text);
+    qr.make();
+    const count = qr.getModuleCount();
+    const dark = [];
+    for (let r = 0; r < count; r++) {
+      for (let c = 0; c < count; c++) {
+        if (qr.isDark(r, c)) dark.push([r, c]);
+      }
+    }
+    return { count, dark };
+  }, [text]);
+
+  if (!modules) return null;
+  const cell = size / modules.count;
+
+  return (
+    <div className="relative mx-auto rounded-md p-3" style={{ background: "#fff", width: size + 24, boxShadow: "inset 0 0 0 1px " + C.kraftDark }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <rect width={size} height={size} fill="#fff" />
+        {modules.dark.map(([r, c], i) => (
+          <rect key={i} x={c * cell} y={r * cell} width={cell + 0.6} height={cell + 0.6} fill={C.ink} />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+function ImagePicker({ value, onChange, height = 96 }) {
+  const inputRef = useRef(null);
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const base64 = await fileToBase64(file);
+    onChange(base64);
+    e.target.value = "";
+  }
+  const isUrlValue = value && !String(value).startsWith("data:");
+  return (
+    <div>
+      <div className="rounded-md overflow-hidden flex items-center justify-center mb-2" style={{ height, background: C.kraft, border: `1.5px dashed ${C.kraftDark}` }}>
+        {value ? (
+          <img src={value} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <div className="flex flex-col items-center gap-1" style={{ color: C.inkSoft }}>
+            <ImagePlus size={22} />
+            <span style={{ fontSize: 11 }}>ยังไม่มีรูปภาพ</span>
+          </div>
+        )}
+      </div>
+      <div className="flex gap-2">
+        <button type="button" onClick={() => inputRef.current?.click()} className="flex-1 py-2 rounded-md text-xs font-medium" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.ink }}>
+          อัปโหลดรูป
+        </button>
+        {value && (
+          <button type="button" onClick={() => onChange(null)} className="px-3 py-2 rounded-md text-xs" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.pink }}>
+            ลบรูป
+          </button>
+        )}
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
+      <input
+        type="text"
+        placeholder="หรือวางลิงก์ URL รูปภาพ"
+        value={isUrlValue ? value : ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full mt-2 px-3 py-2 rounded-md text-xs"
+        style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.ink }}
+      />
+    </div>
+  );
+}
+
+function Sheet({ title, onClose, children }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: "rgba(74,59,82,0.55)" }} onClick={onClose}>
+      <div
+        className="w-full max-w-md rounded-t-2xl p-4 pb-6"
+        style={{ background: C.paper, border: `1.5px solid ${C.kraftDark}`, borderBottom: "none", maxHeight: "85vh", overflowY: "auto" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-semibold text-sm">{title}</span>
+          <button onClick={onClose} className="p-1 rounded-full" style={{ background: C.paperLight }}>
+            <X size={16} color={C.ink} />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function AdminGateModal({ onClose, onSuccess }) {
+  const [code, setCode] = useState("");
+  const [err, setErr] = useState(false);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-6" style={{ background: "rgba(74,59,82,0.55)" }} onClick={onClose}>
+      <div className="w-full max-w-xs rounded-xl p-5" style={{ background: C.paper, border: `1.5px solid ${C.kraftDark}` }} onClick={(e) => e.stopPropagation()}>
+        <div className="flex flex-col items-center text-center gap-2 mb-3">
+          <Lock size={22} color={C.greenDark} />
+          <div className="font-semibold text-sm">เข้าสู่โหมดแอดมิน</div>
+          <div style={{ fontSize: 11, color: C.inkSoft }}>กรอกรหัสผ่านเพื่อเข้าสู่ระบบจัดการ</div>
+        </div>
+        <input
+          type="password"
+          value={code}
+          onChange={(e) => { setCode(e.target.value); setErr(false); }}
+          placeholder="กรอกรหัสผ่าน"
+          className="w-full px-3 py-2.5 rounded-lg text-sm text-center"
+          style={{ background: C.paperLight, border: `1.5px solid ${err ? C.pink : C.kraftDark}`, letterSpacing: "0.3em" }}
+        />
+        {err && <div className="text-center mt-1" style={{ color: C.pink, fontSize: 11 }}>รหัสไม่ถูกต้อง</div>}
+        <div className="flex gap-2 mt-4">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-lg text-sm" style={{ border: `1.5px solid ${C.kraftDark}`, color: C.ink }}>ยกเลิก</button>
+          <button
+            onClick={() => (code === "1234" ? onSuccess() : setErr(true))}
+            className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white"
+            style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}
+          >
+            ยืนยัน
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LabeledInput({ label, ...props }) {
+  return (
+    <label className="block">
+      <span className="text-xs font-medium" style={{ color: C.inkSoft }}>{label}</span>
+      <input {...props} className="w-full mt-1 px-3 py-2.5 rounded-lg text-sm" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.ink }} />
+    </label>
+  );
+}
+
+function PackageEditSheet({ initial, onCancel, onSave, onDelete }) {
+  const isNew = !!initial.isNew;
+  const [draft, setDraft] = useState({ ...initial });
+  return (
+    <Sheet title={isNew ? "เพิ่มแพ็กเกจดอกไม้" : "แก้ไขแพ็กเกจ"} onClose={onCancel}>
+      <div className="flex flex-col gap-3">
+        <ImagePicker value={draft.image} onChange={(v) => setDraft((d) => ({ ...d, image: v }))} height={110} />
+        <LabeledInput label="ชื่อแพ็กเกจ" type="text" value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} />
+        <div className="grid grid-cols-2 gap-3">
+          <LabeledInput label="จำนวนดอก" type="number" min={1} max={9} value={draft.stems} onChange={(e) => setDraft((d) => ({ ...d, stems: Number(e.target.value) }))} />
+          <LabeledInput label="ราคา (บาท)" type="number" min={0} value={draft.price} onChange={(e) => setDraft((d) => ({ ...d, price: Number(e.target.value) }))} />
+        </div>
+        <label className="block">
+          <span className="text-xs font-medium" style={{ color: C.inkSoft }}>คำอธิบาย</span>
+          <textarea
+            rows={2}
+            value={draft.desc}
+            onChange={(e) => setDraft((d) => ({ ...d, desc: e.target.value }))}
+            className="w-full mt-1 px-3 py-2.5 rounded-lg text-sm"
+            style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.ink }}
+          />
+        </label>
+      </div>
+      <div className="flex gap-2 mt-5">
+        {!isNew && (
+          <button onClick={() => onDelete(draft.id)} className="px-3 py-2.5 rounded-lg text-sm" style={{ border: `1.5px solid ${C.kraftDark}`, color: C.pink }}>
+            <Trash2 size={15} />
+          </button>
+        )}
+        <button onClick={onCancel} className="flex-1 py-2.5 rounded-lg text-sm" style={{ border: `1.5px solid ${C.kraftDark}`, color: C.ink }}>ยกเลิก</button>
+        <button
+          onClick={() => draft.name.trim() && onSave(draft)}
+          className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white"
+          style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}
+        >
+          {isNew ? "เพิ่มแพ็กเกจ" : "บันทึก"}
+        </button>
+      </div>
+    </Sheet>
+  );
+}
+
+function SiteSettingsSheet({ initial, onCancel, onSave }) {
+  const [draft, setDraft] = useState({ ...initial });
+  return (
+    <Sheet title="ตั้งค่าข้อความหน้าเว็บ" onClose={onCancel}>
+      <div className="flex flex-col gap-3">
+        <LabeledInput label="ชื่อหน้าเว็บ" type="text" value={draft.title} onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))} />
+        <LabeledInput label="คำอธิบายรอง" type="text" value={draft.subtitle} onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))} />
+        <LabeledInput
+          label="ข้อความประกาศ (ถ้ามี)"
+          type="text"
+          placeholder="เช่น เปิดจองถึงวันที่ 9 ส.ค. เท่านั้น"
+          value={draft.announcement}
+          onChange={(e) => setDraft((d) => ({ ...d, announcement: e.target.value }))}
+        />
+        <div className="pt-2" style={{ borderTop: `1px dashed ${C.kraftDark}` }}>
+          <div className="text-xs font-semibold mt-3 mb-1" style={{ color: C.ink }}>บัญชีรับเงินพร้อมเพย์</div>
+          <div style={{ fontSize: 11, color: C.inkSoft }} className="mb-2">
+            รองรับเบอร์โทร 10 หลัก, เลขบัตรประชาชน 13 หลัก หรือเลข e-Wallet 15 หลัก — QR ที่สร้างจะสแกนจ่ายได้จริง
+          </div>
+        </div>
+        <LabeledInput
+          label="เลขพร้อมเพย์ (เบอร์โทร / เลขบัตร ปชช.)"
+          type="text"
+          placeholder="เช่น 0812345678 หรือ 1234567890123"
+          value={draft.promptpayId}
+          onChange={(e) => setDraft((d) => ({ ...d, promptpayId: e.target.value.replace(/[^0-9]/g, "") }))}
+        />
+        <LabeledInput
+          label="ชื่อบัญชี (แสดงให้ผู้จองเช็คตอนสแกน)"
+          type="text"
+          placeholder="เช่น นางสาว ก ข"
+          value={draft.promptpayName}
+          onChange={(e) => setDraft((d) => ({ ...d, promptpayName: e.target.value }))}
+        />
+      </div>
+      <div className="flex gap-2 mt-5">
+        <button onClick={onCancel} className="flex-1 py-2.5 rounded-lg text-sm" style={{ border: `1.5px solid ${C.kraftDark}`, color: C.ink }}>ยกเลิก</button>
+        <button onClick={() => onSave(draft)} className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white" style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}>บันทึก</button>
+      </div>
+    </Sheet>
+  );
+}
+
+function FlowerBookingPreview() {
+  const [step, setStep] = useState("home");
+  const [pkg, setPkg] = useState(null);
+  const [qty, setQty] = useState(1);
+  const [form, setForm] = useState({ name: "", room: "", phone: "" });
+  const [errors, setErrors] = useState({});
+  const [orders, setOrders] = useState([]);
+  const [currentOrder, setCurrentOrder] = useState(null);
+  const [secondsLeft, setSecondsLeft] = useState(300);
+  const timerRef = useRef(null);
+
+  const [packages, setPackages] = useState(DEFAULT_PACKAGES);
+  const [siteText, setSiteText] = useState(DEFAULT_SITE_TEXT);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showGate, setShowGate] = useState(false);
+  const [editingPackage, setEditingPackage] = useState(null);
+  const [showSiteSettings, setShowSiteSettings] = useState(false);
+
+  useEffect(() => {
+    if (step !== "qr") return;
+    setSecondsLeft(300);
+    timerRef.current = setInterval(() => setSecondsLeft((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(timerRef.current);
+  }, [step, currentOrder?.code]);
+
+  const mm = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
+  const ss = String(secondsLeft % 60).padStart(2, "0");
+
+  function resetFlow() {
+    setStep("home");
+    setPkg(null);
+    setQty(1);
+    setForm({ name: "", room: "", phone: "" });
+    setErrors({});
+    setCurrentOrder(null);
+  }
+
+  function validateForm() {
+    const e = {};
+    if (!form.name.trim()) e.name = "กรอกชื่อ-นามสกุลผู้จอง";
+    if (!form.room.trim()) e.room = "กรอกชั้น/ห้องเรียน";
+    if (!/^0\d{9}$/.test(form.phone.trim())) e.phone = "กรอกเบอร์โทร 10 หลัก เช่น 0812345678";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
+
+  
+    function finalizeOrder(status) {
+    const order = { code: genOrderCode(orders.length + 1), pkg, qty, form: { ...form }, status, time: new Date() };
+    logOrderToSheet(order);
+    setOrders((o) => [order, ...o]);
+    setCurrentOrder(order);
+    setStep("success");
+  }
+
+  function savePackage(draft) {
+    setPackages((list) => {
+      if (draft.isNew) {
+        const newId = `pkg-${Date.now()}`;
+        return [...list, { ...draft, id: newId }];
+      }
+      return list.map((p) => (p.id === draft.id ? { ...draft } : p));
+    });
+    setEditingPackage(null);
+  }
+  function deletePackage(id) {
+    setPackages((list) => list.filter((p) => p.id !== id));
+    setEditingPackage(null);
+  }
+
+  const total = pkg ? pkg.price * qty : 0;
+
+  const paidOrders = orders.filter((o) => o.status === "paid");
+  const pendingOrders = orders.filter((o) => o.status === "pending");
+  const paidTotal = paidOrders.reduce((sum, o) => sum + o.pkg.price * o.qty, 0);
+  const pendingTotal = pendingOrders.reduce((sum, o) => sum + o.pkg.price * o.qty, 0);
+  const grandTotal = paidTotal + pendingTotal;
+
+  return (
+    <div
+      className="min-h-screen w-full flex justify-center"
+      style={{
+        background: `radial-gradient(circle at 12% 8%, ${C.pink}3d 0, transparent 45%), radial-gradient(circle at 92% 88%, ${C.blue}45 0, transparent 45%), ${C.kraft}`,
+        fontFamily: FONT_BODY,
+        color: C.ink,
+      }}
+    >
+      <style>{`
+        input:focus, textarea:focus { outline: 2px solid ${C.pink}; outline-offset: 1px; }
+        @keyframes bloomIn { from { opacity:0; transform: translateY(6px) scale(0.98);} to {opacity:1; transform: translateY(0) scale(1);} }
+        .bloom { animation: bloomIn 0.35s ease both; }
+      `}</style>
+
+      <div className="fixed pointer-events-none" style={{ top: -70, left: -70, width: 260, height: 260, borderRadius: "50%", background: C.pink, opacity: 0.16, filter: "blur(64px)", zIndex: 0 }} />
+      <div className="fixed pointer-events-none" style={{ bottom: -100, right: -80, width: 320, height: 320, borderRadius: "50%", background: C.blue, opacity: 0.16, filter: "blur(74px)", zIndex: 0 }} />
+      <div className="fixed pointer-events-none" style={{ top: "38%", right: -70, width: 190, height: 190, borderRadius: "50%", background: C.pink, opacity: 0.10, filter: "blur(58px)", zIndex: 0 }} />
+
+      <div className="relative w-full max-w-md min-h-screen flex flex-col" style={{ zIndex: 1 }}>
+        <header className="sticky top-0 z-10 px-4 pt-4 pb-3" style={{ background: `linear-gradient(180deg, ${C.kraft} 70%, transparent)` }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {step !== "home" && step !== "success" ? (
+                <button
+                  onClick={() => {
+                    if (step === "info") setStep("home");
+                    else if (step === "payment") setStep("info");
+                    else if (step === "qr") setStep("payment");
+                    else if (step === "orders") setStep("home");
+                    else if (step === "adminSummary") setStep("home");
+                  }}
+                  className="p-1.5 rounded-full"
+                  style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}
+                  aria-label="ย้อนกลับ"
+                >
+                  <ArrowLeft size={16} color={C.ink} />
+                </button>
+              ) : (
+                <Atom size={20} color={C.greenDark} />
+              )}
+              <div className="flex items-center gap-2.5">
+                <span className="rounded-full shrink-0" style={{ width: 4, minHeight: 32, alignSelf: "stretch", background: `linear-gradient(180deg, ${C.bannerOrange}, ${C.bannerRose})` }} />
+                <div>
+                  <div className="text-lg leading-none font-semibold" style={{ fontFamily: FONT_DISPLAY, color: C.greenDark }}>{siteText.title}</div>
+                  <div style={{ fontSize: 11, color: C.inkSoft }}>{siteText.subtitle}</div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {step !== "orders" && (
+                <button onClick={() => setStep("orders")} className="relative p-2 rounded-full" style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }} aria-label="คำสั่งซื้อของฉัน">
+                  <ClipboardList size={17} color={C.ink} />
+                  {orders.length > 0 && (
+                    <span className="absolute -top-1 -right-1 rounded-full flex items-center justify-center text-white font-bold" style={{ background: C.pink, width: 16, height: 16, fontSize: 9 }}>
+                      {orders.length}
+                    </span>
+                  )}
+                </button>
+              )}
+              <button
+                onClick={() => (isAdmin ? setIsAdmin(false) : setShowGate(true))}
+                className="p-2 rounded-full"
+                style={{ background: isAdmin ? C.greenDark : C.paperLight, border: `1px solid ${C.kraftDark}` }}
+                aria-label="โหมดแอดมิน"
+              >
+                {isAdmin ? <Settings size={17} color="#fff" /> : <Lock size={16} color={C.ink} />}
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 px-4 pb-24">
+          {isAdmin && (
+            <div className="mb-3 flex items-center justify-between px-3 py-1.5 rounded-full text-xs" style={{ background: C.greenDark, color: "#fff" }}>
+              <span className="flex items-center gap-1"><Settings size={12} /> โหมดแอดมิน — แก้ไขจะเห็นเฉพาะตัวอย่างนี้</span>
+              <button onClick={() => setIsAdmin(false)} className="underline shrink-0 ml-2">ออก</button>
+            </div>
+          )}
+
+          {isAdmin && (step === "home" || step === "adminSummary") && (
+            <div className="flex gap-2 mb-3 flex-wrap">
+              <button
+                onClick={() => setStep(step === "adminSummary" ? "home" : "adminSummary")}
+                className="text-xs px-3 py-1.5 rounded-full font-medium"
+                style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}
+              >
+                {step === "adminSummary" ? "← กลับหน้าร้าน" : "สรุปยอดขาย"}
+              </button>
+              <button onClick={() => setShowSiteSettings(true)} className="text-xs px-3 py-1.5 rounded-full font-medium" style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}>
+                ตั้งค่าข้อความเว็บ
+              </button>
+            </div>
+          )}
+
+          {step !== "home" && step !== "orders" && step !== "adminSummary" && <ProgressSteps step={step} />}
+
+          {step === "home" && (
+            <div className="bloom">
+              {siteText.announcement && (
+                <div className="mb-3 text-xs px-3 py-2 rounded-md flex items-center gap-2" style={{ background: C.amber + "22", color: C.amber, border: `1px solid ${C.amber}55` }}>
+                  <Sparkles size={13} /> {siteText.announcement}
+                </div>
+              )}
+              <SectionBanner icon={Flower2} className="mb-4">ทุกดอกที่มอบ คือ 1 เสียงโหวต เพื่อคนโปรดของคุณ!</SectionBanner>
+
+              <div className="flex flex-col gap-3">
+                {packages.map((p) => {
+                  const selected = pkg?.id === p.id;
+                  return (
+                    <div key={p.id} className="relative">
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => { setPkg(p); if (pkg?.id !== p.id) setQty(1); }}
+                        className="cursor-pointer rounded-xl overflow-hidden transition-colors"
+                        style={{
+                          background: C.paperLight,
+                          border: `1.5px solid ${selected ? C.pink : C.kraftDark}`,
+                          boxShadow: selected ? `0 10px 20px -12px ${C.pink}77` : "none",
+                        }}
+                      >
+                        <div className="relative" style={{ height: 132, background: C.kraft }}>
+                          {p.image ? (
+                            <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center gap-1">
+                              {Array.from({ length: p.stems }).map((_, i) => (
+                                <Flower2 key={i} size={p.stems === 1 ? 40 : 28} color={C.pink} strokeWidth={1.4} />
+                              ))}
+                            </div>
+                          )}
+                          <span
+                            className="absolute top-2 right-2 px-2.5 py-1 rounded-full font-bold"
+                            style={{ background: "#fff", color: C.greenDark, fontFamily: FONT_MONO, fontSize: 13, boxShadow: "0 2px 6px rgba(0,0,0,0.18)" }}
+                          >
+                            {baht(p.price)}
+                          </span>
+                        </div>
+                        <div className="p-3.5">
+                          <div className="font-semibold text-sm">{p.name}</div>
+                          <div className="text-xs mt-0.5" style={{ color: C.inkSoft }}>{p.desc}</div>
+                        </div>
+                      </div>
+                      {isAdmin && (
+                        <button
+                          onClick={() => setEditingPackage(p)}
+                          className="absolute top-2 left-2 p-1.5 rounded-full z-10"
+                          style={{ background: C.ink, boxShadow: "0 1px 4px rgba(0,0,0,0.3)" }}
+                          aria-label="แก้ไขแพ็กเกจ"
+                        >
+                          <Pencil size={12} color="#fff" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+                {isAdmin && (
+                  <button
+                    onClick={() => setEditingPackage({ isNew: true, id: null, name: "", stems: 3, price: 0, desc: "", image: null })}
+                    className="rounded-xl flex flex-col items-center justify-center gap-1 py-8"
+                    style={{ border: `1.5px dashed ${C.kraftDark}`, color: C.inkSoft }}
+                  >
+                    <Plus size={20} />
+                    <span className="text-xs">เพิ่มแพ็กเกจดอกไม้</span>
+                  </button>
+                )}
+              </div>
+
+              {pkg && (
+                <div className="mt-4 rounded-lg p-4 bloom" style={{ background: C.paperLight, border: `1.5px solid ${C.pink}` }}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">จำนวนช่อ · {pkg.name}</span>
+                    <div className="flex items-center gap-3">
+                      <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg" style={{ background: C.kraft, color: C.ink }} aria-label="ลดจำนวน">−</button>
+                      <span className="w-5 text-center font-bold" style={{ fontFamily: FONT_MONO }}>{qty}</span>
+                      <button
+                        onClick={() => setQty((q) => Math.min(20, q + 1))}
+                        className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg text-white"
+                        style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}
+                        aria-label="เพิ่มจำนวน"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: `1px dashed ${C.kraftDark}` }}>
+                    <span className="text-xs" style={{ color: C.inkSoft }}>ยอดรวม</span>
+                    <span className="font-bold" style={{ fontFamily: FONT_MONO, color: C.greenDark }}>{baht(pkg.price * qty)}</span>
+                  </div>
+                  <button
+                    onClick={() => setStep("info")}
+                    className="w-full mt-4 py-3 rounded-lg font-semibold text-white"
+                    style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}
+                  >
+                    ไปต่อ · กรอกข้อมูลผู้จอง
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === "adminSummary" && (
+            <div className="bloom">
+              <SectionBanner icon={Wallet} className="mb-4">สรุปยอดขายทั้งหมด</SectionBanner>
+
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div className="rounded-lg p-3" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}` }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <QrCode size={14} color={C.greenDark} />
+                    <span className="text-xs font-medium" style={{ color: C.inkSoft }}>ยอดโอน (QR)</span>
+                  </div>
+                  <div className="font-bold text-lg" style={{ fontFamily: FONT_MONO, color: C.ink }}>{baht(paidTotal)}</div>
+                  <div style={{ fontSize: 11, color: C.inkSoft }}>{paidOrders.length} ออเดอร์</div>
+                </div>
+                <div className="rounded-lg p-3" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}` }}>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <Wallet size={14} color={C.amber} />
+                    <span className="text-xs font-medium" style={{ color: C.inkSoft }}>ยอดชำระปลายทาง</span>
+                  </div>
+                  <div className="font-bold text-lg" style={{ fontFamily: FONT_MONO, color: C.ink }}>{baht(pendingTotal)}</div>
+                  <div style={{ fontSize: 11, color: C.inkSoft }}>{pendingOrders.length} ออเดอร์</div>
+                </div>
+              </div>
+
+              <div className="rounded-lg p-4 mb-4 text-center text-white" style={{ background: `linear-gradient(135deg, ${C.purple}, ${C.pink})` }}>
+                <div className="text-xs opacity-90">ยอดขายรวมทั้งหมด</div>
+                <div className="text-2xl font-bold" style={{ fontFamily: FONT_MONO }}>{baht(grandTotal)}</div>
+                <div className="text-xs opacity-90 mt-1">{orders.length} ออเดอร์ทั้งหมด</div>
+              </div>
+
+              <div className="text-xs font-medium mb-2" style={{ color: C.inkSoft }}>รายการทั้งหมด</div>
+              {orders.length === 0 ? (
+                <div className="rounded-lg p-6 text-center text-sm" style={{ background: C.paperLight, border: `1.5px dashed ${C.kraftDark}`, color: C.inkSoft }}>
+                  ยังไม่มีคำสั่งซื้อ
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {orders.map((o) => (
+                    <div key={o.code} className="rounded-lg p-3 flex items-center justify-between" style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}>
+                      <div className="min-w-0">
+                        <div className="font-bold" style={{ fontFamily: FONT_MONO, color: C.greenDark, fontSize: 12 }}>{o.code}</div>
+                        <div className="truncate" style={{ fontSize: 11, color: C.inkSoft }}>{o.pkg.name} ×{o.qty} · {o.form.name}</div>
+                      </div>
+                      <div className="text-right shrink-0 ml-2">
+                        <div className="font-bold text-sm" style={{ fontFamily: FONT_MONO }}>{baht(o.pkg.price * o.qty)}</div>
+                        <StatusBadge status={o.status} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === "info" && pkg && (
+            <div className="bloom">
+              <OrderMiniSummary pkg={pkg} qty={qty} />
+              <SectionBanner icon={ClipboardList} className="mt-4 mb-4">ข้อมูลผู้จอง (สำหรับออกใบรับดอกไม้)</SectionBanner>
+              <div className="flex flex-col gap-3">
+                <Field label="ชื่อ-นามสกุล" value={form.name} error={errors.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} placeholder="เช่น ด.ญ. ใบบุญ ใจดี" />
+                <Field label="ชั้น/ห้องเรียน" value={form.room} error={errors.room} onChange={(v) => setForm((f) => ({ ...f, room: v }))} placeholder="เช่น ม.5/2" />
+                <Field label="เบอร์โทรศัพท์" value={form.phone} error={errors.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v.replace(/[^\d]/g, "") }))} placeholder="เช่น 0812345678" inputMode="numeric" />
+              </div>
+              <button onClick={() => validateForm() && setStep("payment")} className="w-full mt-5 py-3 rounded-lg font-semibold text-white" style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}>
+                ไปต่อ · เลือกวิธีชำระเงิน
+              </button>
+            </div>
+          )}
+
+          {step === "payment" && pkg && (
+            <div className="bloom">
+              <OrderMiniSummary pkg={pkg} qty={qty} form={form} />
+              <SectionBanner icon={Wallet} className="mt-4 mb-4">เลือกวิธีชำระเงิน</SectionBanner>
+              <div className="flex flex-col gap-3">
+                <button onClick={() => setStep("qr")} className="rounded-lg p-4 flex items-center gap-3 text-left" style={{ background: C.paperLight, border: `1.5px solid ${C.blue}` }}>
+                  <div className="p-2 rounded-md" style={{ background: C.blue + "22" }}><QrCode size={20} color={C.blue} /></div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm">สแกน QR พร้อมเพย์</div>
+                    <div className="text-xs" style={{ color: C.inkSoft }}>ชำระทันที ยืนยันออเดอร์ทันที</div>
+                  </div>
+                  <ChevronRight size={16} color={C.inkSoft} />
+                </button>
+                <button onClick={() => finalizeOrder("pending")} className="rounded-lg p-4 flex items-center gap-3 text-left" style={{ background: C.paperLight, border: `1.5px solid ${C.amber}` }}>
+                  <div className="p-2 rounded-md" style={{ background: C.amber + "22" }}><Wallet size={20} color={C.amber} /></div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-sm">ชำระปลายทาง</div>
+                    <div className="text-xs" style={{ color: C.inkSoft }}>จ่ายเงินสดหน้างานตอนรับดอกไม้</div>
+                  </div>
+                  <ChevronRight size={16} color={C.inkSoft} />
+                </button>
+              </div>
+              <div className="mt-4 text-xs px-3 py-2 rounded-md flex items-center gap-2" style={{ background: C.paperLight, color: C.inkSoft }}>
+                <Sparkles size={13} /> ยอดรวม: <span style={{ fontFamily: FONT_MONO, color: C.ink }}>{baht(total)}</span>
+              </div>
+            </div>
+          )}
+
+          {step === "qr" && pkg && (
+            <div className="bloom text-center">
+              <Eyebrow color={C.blue}>สแกนเพื่อชำระเงิน · พร้อมเพย์</Eyebrow>
+              <div className="text-2xl font-bold mb-3" style={{ fontFamily: FONT_MONO, color: C.ink }}>{baht(total)}</div>
+              {siteText.promptpayId ? (
+                <>
+                  <RealQRCode text={buildPromptPayPayload(siteText.promptpayId, total)} size={200} />
+                  {siteText.promptpayName && (
+                    <div className="mt-2 text-xs" style={{ color: C.inkSoft }}>
+                      ชื่อบัญชี: <span style={{ color: C.ink, fontWeight: 600 }}>{siteText.promptpayName}</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="my-3 text-xs px-3 py-3 rounded-md text-left" style={{ background: C.amber + "22", color: C.amber, border: `1px solid ${C.amber}55` }}>
+                  ยังไม่ได้ตั้งค่าเลขพร้อมเพย์ — ไปที่โหมดแอดมิน → ตั้งค่าข้อความเว็บ เพื่อใส่เลขพร้อมเพย์ก่อน
+                </div>
+              )}
+              <div className="mt-3 inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full" style={{ background: secondsLeft === 0 ? "#E8759F22" : C.paperLight, color: secondsLeft === 0 ? C.pink : C.inkSoft }}>
+                <Timer size={13} /> {secondsLeft === 0 ? "QR หมดอายุแล้ว" : `เหลือเวลา ${mm}:${ss}`}
+              </div>
+              {secondsLeft === 0 ? (
+                <button onClick={() => setSecondsLeft(300)} className="w-full mt-5 py-3 rounded-lg font-semibold flex items-center justify-center gap-2" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.ink }}>
+                  <RefreshCcw size={16} /> ขอ QR ใหม่
+                </button>
+              ) : (
+                <button onClick={() => finalizeOrder("paid")} className="w-full mt-5 py-3 rounded-lg font-semibold text-white" style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.greenDark})` }}>
+                  ฉันสแกนจ่ายแล้ว
+                </button>
+              )}
+
+              <button onClick={() => setStep("payment")} className="w-full mt-2 py-2.5 rounded-lg text-sm" style={{ color: C.inkSoft }}>
+                เปลี่ยนเป็นชำระปลายทางแทน
+              </button>
+            </div>
+          )}
+
+          {step === "success" && currentOrder && (
+            <div className="bloom">
+              <div className="text-center mb-4">
+                <CheckCircle2 size={34} color={C.greenDark} className="mx-auto mb-1" />
+                <div className="text-base font-semibold">จองสำเร็จแล้ว!</div>
+              </div>
+              <PinnedCard>
+                <Eyebrow>ใบยืนยันการจอง · Order Receipt</Eyebrow>
+                <div className="text-3xl font-bold tracking-wider mb-3" style={{ fontFamily: FONT_MONO, color: C.greenDark }}>{currentOrder.code}</div>
+                <div style={{ borderTop: `1.5px dashed ${C.kraftDark}` }} className="mb-3" />
+                <Row label="ช่อดอกไม้" value={`${currentOrder.pkg.name} ×${currentOrder.qty} (${currentOrder.pkg.stems * currentOrder.qty} ดอก)`} />
+                <Row label="ผู้จอง" value={`${currentOrder.form.name} · ${currentOrder.form.room}`} />
+                <Row label="ยอดชำระ" value={baht(currentOrder.pkg.price * currentOrder.qty)} />
+                <div className="flex items-center justify-between py-1.5">
+                  <span className="text-xs" style={{ color: C.inkSoft }}>สถานะ</span>
+                  <StatusBadge status={currentOrder.status} />
+                </div>
+                <div style={{ borderTop: `1.5px dashed ${C.kraftDark}` }} className="my-3" />
+                <RealQRCode text={currentOrder.code} size={120} />
+                <p
+                  className="text-center mt-3"
+                  style={
+                    currentOrder.status === "paid"
+                      ? { color: "#DC2626", fontSize: 13, fontWeight: 700 }
+                      : { color: C.inkSoft, fontSize: 11 }
+                  }
+                >
+                  {currentOrder.status === "paid"
+                    ? "กรุณาแสดงเลขออเดอร์นี้ พร้อมสลิปการโอนเงิน ที่บูธรับดอกไม้ในวันงาน"
+                    : "กรุณาแสดงเลขออเดอร์นี้ที่บูธรับดอกไม้ในวันงาน แล้วชำระเงินหน้างาน"}
+                </p>
+              </PinnedCard>
+              <button
+                onClick={() => downloadOrderReceipt(currentOrder)}
+                className="w-full mt-5 py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2"
+                style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}
+              >
+                <Download size={16} /> บันทึกภาพออเดอร์
+              </button>
+              <button onClick={resetFlow} className="w-full mt-2 py-2.5 rounded-lg text-sm font-medium" style={{ color: C.ink, border: `1.5px solid ${C.kraftDark}` }}>จองอีกช่อ</button>
+              <button onClick={() => setStep("orders")} className="w-full mt-2 py-2.5 rounded-lg text-sm font-medium" style={{ color: C.ink, border: `1.5px solid ${C.kraftDark}` }}>ดูคำสั่งซื้อของฉัน</button>
+            </div>
+          )}
+
+          {step === "orders" && (
+            <div className="bloom">
+              <SectionBanner icon={ClipboardList} className="mb-4">คำสั่งซื้อของฉันในรอบนี้</SectionBanner>
+              {orders.length === 0 ? (
+                <div className="rounded-lg p-6 text-center text-sm" style={{ background: C.paperLight, border: `1.5px dashed ${C.kraftDark}`, color: C.inkSoft }}>
+                  ยังไม่มีคำสั่งซื้อ — เริ่มเลือกซื้อดอกไม้ช่อแรกของคุณได้เลย
+                  <button onClick={() => setStep("home")} className="block mx-auto mt-3 px-4 py-2 rounded-lg text-white text-sm font-medium" style={{ background: `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` }}>เลือกซื้อดอกไม้</button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {orders.map((o) => (
+                    <div key={o.code} className="rounded-lg p-3.5" style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}` }}>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="font-bold text-sm tracking-wide" style={{ fontFamily: FONT_MONO, color: C.greenDark }}>{o.code}</span>
+                        <div className="flex items-center gap-2">
+                          <StatusBadge status={o.status} />
+                          <button onClick={() => downloadOrderReceipt(o)} className="p-1.5 rounded-full" style={{ background: C.kraft }} aria-label="บันทึกภาพออเดอร์">
+                            <Download size={13} color={C.ink} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="text-xs" style={{ color: C.inkSoft }}>{o.pkg.name} ×{o.qty} · {baht(o.pkg.price * o.qty)}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+      </div>
+
+      {showGate && <AdminGateModal onClose={() => setShowGate(false)} onSuccess={() => { setIsAdmin(true); setShowGate(false); }} />}
+      {editingPackage && (
+        <PackageEditSheet initial={editingPackage} onCancel={() => setEditingPackage(null)} onSave={savePackage} onDelete={deletePackage} />
+      )}
+      {showSiteSettings && (
+        <SiteSettingsSheet initial={siteText} onCancel={() => setShowSiteSettings(false)} onSave={(d) => { setSiteText(d); setShowSiteSettings(false); }} />
+      )}
+    </div>
+  );
+}
+
+function OrderMiniSummary({ pkg, qty = 1, form }) {
+  return (
+    <div className="rounded-lg p-3 flex items-center gap-3 text-xs" style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}`, color: C.inkSoft }}>
+      <span className="w-9 h-9 rounded-md flex items-center justify-center shrink-0 overflow-hidden" style={{ background: C.kraft }}>
+        {pkg.image ? <img src={pkg.image} alt="" className="w-full h-full object-cover" /> : <Flower2 size={18} color={C.pink} />}
+      </span>
+      <div className="flex-1 min-w-0">
+        <div className="truncate font-medium" style={{ color: C.ink }}>{pkg.name}{qty > 1 ? ` ×${qty}` : ""}</div>
+        <div>{baht(pkg.price * qty)}</div>
+        {form?.name && <div className="truncate">ผู้จอง: {form.name}</div>}
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }) {
+  return (
+    <div className="flex items-start justify-between gap-3 py-1">
+      <span className="text-xs shrink-0" style={{ color: C.inkSoft }}>{label}</span>
+      <span className="text-xs font-medium text-right">{value}</span>
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, error, placeholder, inputMode }) {
+  return (
+    <label className="block">
+      <span className="text-xs font-medium" style={{ color: C.inkSoft }}>{label}</span>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        inputMode={inputMode}
+        className="w-full mt-1 px-3 py-2.5 rounded-lg text-sm"
+        style={{ background: C.paperLight, border: `1.5px solid ${error ? C.pink : C.kraftDark}`, color: C.ink }}
+      />
+      {error && <span className="mt-1 block" style={{ color: C.pink, fontSize: 11 }}>{error}</span>}
+    </label>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<FlowerBookingPreview />);
+</script>
+</body>
+</html>
