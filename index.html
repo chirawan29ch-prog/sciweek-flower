@@ -851,6 +851,7 @@ function FlowerBookingPreview() {
   const [sheetOrders, setSheetOrders] = useState(null);
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [sheetLoading, setSheetLoading] = useState(false);
+  const [sheetError, setSheetError] = useState(null);
 
   function addToCart(pkgId) {
     setCart((c) => ({ ...c, [pkgId]: (c[pkgId] || 0) + 1 }));
@@ -868,10 +869,20 @@ function FlowerBookingPreview() {
   function loadSheetOrders() {
     if (!GOOGLE_SHEET_WEBHOOK_URL || GOOGLE_SHEET_WEBHOOK_URL.includes("วาง URL")) return;
     setSheetLoading(true);
+    setSheetError(null);
     fetch(GOOGLE_SHEET_WEBHOOK_URL)
-      .then((r) => r.json())
-      .then((data) => setSheetOrders(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Load sheet orders failed", err))
+      .then((r) => {
+        if (!r.ok) throw new Error(`เซิร์ฟเวอร์ตอบกลับผิดพลาด (HTTP ${r.status})`);
+        return r.json();
+      })
+      .then((data) => {
+        if (!Array.isArray(data)) throw new Error("ข้อมูลที่ได้ไม่ใช่รายการออเดอร์ (อาจยังไม่ได้เพิ่ม doGet หรือยังไม่ได้ Deploy เวอร์ชันใหม่)");
+        setSheetOrders(data);
+      })
+      .catch((err) => {
+        console.error("Load sheet orders failed", err);
+        setSheetError(err.message || String(err));
+      })
       .finally(() => setSheetLoading(false));
   }
 
@@ -1189,9 +1200,17 @@ function FlowerBookingPreview() {
                 </button>
               </div>
 
-              <div className="mb-3 text-xs px-3 py-2 rounded-md" style={{ background: sheetOrders !== null ? C.ctaSage + "33" : C.amber + "22", color: sheetOrders !== null ? C.ctaTeal : C.amber }}>
+             <div
+                className="mb-3 text-xs px-3 py-2 rounded-md"
+                style={{
+                  background: sheetError ? "#DC262622" : sheetOrders !== null ? C.ctaSage + "33" : C.amber + "22",
+                  color: sheetError ? "#DC2626" : sheetOrders !== null ? C.ctaTeal : C.amber,
+                }}
+              >
                 {sheetLoading
                   ? "กำลังโหลดข้อมูลจาก Google Sheet..."
+                  : sheetError
+                  ? `โหลดจากชีตไม่สำเร็จ: ${sheetError}`
                   : sheetOrders !== null
                   ? `ข้อมูลจาก Google Sheet · อัปเดตล่าสุดตอนนี้ (${sheetOrders.length} รายการ)`
                   : "ยังไม่ได้เชื่อม Google Sheet — แสดงเฉพาะออเดอร์ในเครื่องนี้เท่านั้น"}
