@@ -1237,9 +1237,9 @@ function FlowerBookingPreview() {
           {/* ---------------- HOME: browse & buy flowers (multi-select cart) ---------------- */}
           {step === "home" && (
             <div className="bloom">
-              {siteText.announcement && (
-                <div className="mb-3 px-4 py-3 rounded-lg flex items-center gap-2 text-white font-bold text-sm" style={{ background: `linear-gradient(135deg, ${C.amber}, #C97A1A)`, boxShadow: `0 8px 18px -8px ${C.amber}aa` }}>
-                  <Sparkles size={17} className="shrink-0" /> {siteText.announcement}
+           {siteText.announcement && (
+                <div className="mb-3 px-4 py-3 rounded-lg flex items-center gap-2 font-bold text-sm" style={{ background: "#FEF2F2", color: "#B91C1C", borderLeft: "4px solid #DC2626" }}>
+                  <Sparkles size={17} className="shrink-0" color="#DC2626" /> {siteText.announcement}
                 </div>
               )}
               <SectionBanner icon={Flower2} className="mb-4">{siteText.homeBanner}</SectionBanner>
