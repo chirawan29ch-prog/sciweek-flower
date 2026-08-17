@@ -1074,8 +1074,8 @@ function FlowerBookingPreview() {
           {step === "home" && (
             <div className="bloom">
               {siteText.announcement && (
-                <div className="mb-3 text-xs px-3 py-2 rounded-md flex items-center gap-2" style={{ background: C.amber + "22", color: C.amber, border: `1px solid ${C.amber}55` }}>
-                  <Sparkles size={13} /> {siteText.announcement}
+                <div className="mb-3 px-4 py-3 rounded-lg flex items-center gap-2 text-white font-bold text-sm" style={{ background: `linear-gradient(135deg, ${C.amber}, #C97A1A)`, boxShadow: `0 8px 18px -8px ${C.amber}aa` }}>
+                  <Sparkles size={17} className="shrink-0" /> {siteText.announcement}
                 </div>
               )}
               <SectionBanner icon={Flower2} className="mb-4">ทุกดอกที่มอบ คือ 1 เสียงโหวต เพื่อคนโปรดของคุณ!</SectionBanner>
@@ -1093,9 +1093,9 @@ function FlowerBookingPreview() {
                           boxShadow: qtyInCart > 0 ? `0 10px 20px -12px ${C.pink}77` : "none",
                         }}
                       >
-                        <div className="relative" style={{ height: 132, background: C.kraft }}>
+                       <div className="relative" style={{ height: 220, background: C.kraft }}>
                           {p.image ? (
-                            <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                            <img src={p.image} alt={p.name} className="w-full h-full object-contain" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center gap-1">
                               {Array.from({ length: p.stems }).map((_, i) => (
@@ -1386,8 +1386,7 @@ function FlowerBookingPreview() {
                   <span className="text-xs" style={{ color: C.inkSoft }}>สถานะ</span>
                   <StatusBadge status={currentOrder.status} />
                 </div>
-                <div style={{ borderTop: `1.5px dashed ${C.kraftDark}` }} className="my-3" />
-                <RealQRCode text={currentOrder.code} size={120} />
+             <div style={{ borderTop: `1.5px dashed ${C.kraftDark}` }} className="my-3" />
                 <p
                   className="text-center mt-3"
                   style={
