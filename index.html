@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>จองพวงมาลัย/ดอกไม้ สัปดาห์วันวิทยาศาสตร์</title>
+<title>จองดอกไม้ให้กำลังใจ สัปดาห์วันวิทยาศาสตร์</title>
+
+<meta property="og:title" content="จองดอกไม้ให้กำลังใจ สัปดาห์วันวิทยาศาสตร์" />
+<meta property="og:description" content="จองพวงมาลัย/ดอกไม้ให้กำลังใจนักเรียนที่เข้าประกวด ทุกดอกที่มอบคือ 1 เสียงโหวต" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sciweek-flower.netlify.app" />
+<meta name="twitter:card" content="summary" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -199,6 +205,14 @@ function Lock(props) {
     <Icon {...props}>
       <rect x="4" y="11" width="16" height="9" rx="2" />
       <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </Icon>
+  );
+}
+function Eye(props) {
+  return (
+    <Icon {...props}>
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
     </Icon>
   );
 }
@@ -545,7 +559,7 @@ async function downloadOrderReceipt(order) {
   ctx.fillStyle = C.inkSoft;
   ctx.fillText("สถานะ", cardX + 28, y);
   const paid = order.status === "paid";
-  const badgeText = paid ? "ชำระแล้ว" : "รอชำระที่งาน";
+  const badgeText = paid ? "ชำระแล้ว" : "รอชำระปลายทาง";
   ctx.font = "600 13px 'Prompt', sans-serif";
   const badgeW = ctx.measureText(badgeText).width + 28;
   const badgeH = 26;
@@ -634,7 +648,7 @@ function StatusBadge({ status }) {
       style={{ fontFamily: FONT_BODY, color: "#fff", background: paid ? C.green : C.amber }}
     >
       {paid ? <CheckCircle2 size={13} /> : <Timer size={13} />}
-      {paid ? "ชำระแล้ว" : "รอชำระที่งาน"}
+      {paid ? "ชำระแล้ว" : "รอชำระปลายทาง"}
     </span>
   );
 }
@@ -829,7 +843,7 @@ function PackageEditSheet({ initial, onCancel, onSave, onDelete }) {
           <LabeledInput label="จำนวนดอก" type="number" min={1} max={9} value={draft.stems} onChange={(e) => setDraft((d) => ({ ...d, stems: Number(e.target.value) }))} />
           <LabeledInput label="ราคา (บาท)" type="number" min={0} value={draft.price} onChange={(e) => setDraft((d) => ({ ...d, price: Number(e.target.value) }))} />
         </div>
-     <label className="block">
+        <label className="block">
           <span className="text-xs font-medium" style={{ color: C.inkSoft }}>คำอธิบาย</span>
           <textarea
             rows={2}
@@ -990,6 +1004,8 @@ function FlowerBookingPreview() {
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [sheetLoading, setSheetLoading] = useState(false);
   const [sheetError, setSheetError] = useState(null);
+  const [finalizing, setFinalizing] = useState(false);
+  const [orderSearch, setOrderSearch] = useState("");
 
   function addToCart(pkgId) {
     setCart((c) => ({ ...c, [pkgId]: (c[pkgId] || 0) + 1 }));
@@ -1043,7 +1059,7 @@ function FlowerBookingPreview() {
   }, []);
 
   useEffect(() => {
-    if (step === "adminSummary") loadSheetOrders();
+    if (step === "adminSummary" || step === "publicList") loadSheetOrders();
   }, [step]);
 
   useEffect(() => {
@@ -1073,13 +1089,32 @@ function FlowerBookingPreview() {
     return Object.keys(e).length === 0;
   }
 
-  function finalizeOrder(status) {
+  async function finalizeOrder(status) {
+    if (finalizing) return;
+    setFinalizing(true);
     const items = getCartItems(cart, packages);
-    const order = { code: genOrderCode(orders.length + 1), items, total: cartTotal(items), form: { ...form }, status, time: new Date() };
+
+    // Ask the shared sheet how many orders already exist, so the number is unique
+    // across every visitor — not just "how many I've placed on this device."
+    let seq = orders.length + 1;
+    if (GOOGLE_SHEET_WEBHOOK_URL && !GOOGLE_SHEET_WEBHOOK_URL.includes("วาง URL")) {
+      try {
+        const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) seq = data.length + 1;
+        }
+      } catch (err) {
+        console.error("Could not check current order count, using local count instead", err);
+      }
+    }
+
+    const order = { code: genOrderCode(seq), items, total: cartTotal(items), form: { ...form }, status, time: new Date() };
     logOrderToSheet(order);
     setOrders((o) => [order, ...o]);
     setCurrentOrder(order);
     setStep("success");
+    setFinalizing(false);
   }
 
   function savePackage(draft) {
@@ -1168,6 +1203,7 @@ function FlowerBookingPreview() {
                     else if (step === "qr") setStep("payment");
                     else if (step === "orders") setStep("home");
                     else if (step === "adminSummary") setStep("home");
+                    else if (step === "publicList") setStep("home");
                   }}
                   className="p-1.5 rounded-full"
                   style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}
@@ -1232,12 +1268,37 @@ function FlowerBookingPreview() {
             </div>
           )}
 
-          {step !== "home" && step !== "orders" && step !== "adminSummary" && <ProgressSteps step={step} />}
+          {step !== "home" && step !== "orders" && step !== "adminSummary" && step !== "publicList" && <ProgressSteps step={step} />}
+
+          {(step === "home" || step === "publicList") && (
+            <div className="flex gap-1.5 mb-4 p-1.5 rounded-full" style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}>
+              <button
+                onClick={() => setStep("home")}
+                className="flex-1 py-2.5 rounded-full text-sm font-semibold transition-colors"
+                style={{
+                  background: step === "home" ? `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` : "transparent",
+                  color: step === "home" ? "#fff" : C.inkSoft,
+                }}
+              >
+                🌸 จองดอกไม้
+              </button>
+              <button
+                onClick={() => setStep("publicList")}
+                className="flex-1 py-2.5 rounded-full text-sm font-semibold transition-colors"
+                style={{
+                  background: step === "publicList" ? `linear-gradient(135deg, ${C.ctaCream} 0%, ${C.ctaSage} 45%, ${C.ctaTeal} 100%)` : "transparent",
+                  color: step === "publicList" ? "#fff" : C.inkSoft,
+                }}
+              >
+                🔍 เช็คเลขออเดอร์
+              </button>
+            </div>
+          )}
 
           {/* ---------------- HOME: browse & buy flowers (multi-select cart) ---------------- */}
           {step === "home" && (
             <div className="bloom">
-           {siteText.announcement && (
+              {siteText.announcement && (
                 <div className="mb-3 px-4 py-3 rounded-lg flex items-center gap-2 font-bold text-sm" style={{ background: "#FEF2F2", color: "#B91C1C", borderLeft: "4px solid #DC2626" }}>
                   <Sparkles size={17} className="shrink-0" color="#DC2626" /> {siteText.announcement}
                 </div>
@@ -1333,7 +1394,7 @@ function FlowerBookingPreview() {
                 })}
                 {isAdmin && (
                   <button
-                   onClick={() => setEditingPackage({ isNew: true, id: null, name: "", stems: 3, price: 0, desc: "", image: null, soldOut: false })}
+                    onClick={() => setEditingPackage({ isNew: true, id: null, name: "", stems: 3, price: 0, desc: "", image: null, soldOut: false })}
                     className="rounded-xl flex flex-col items-center justify-center gap-1 py-8"
                     style={{ border: `1.5px dashed ${C.kraftDark}`, color: C.inkSoft }}
                   >
@@ -1358,6 +1419,71 @@ function FlowerBookingPreview() {
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* ---------------- PUBLIC: order list (everyone can see) ---------------- */}
+          {step === "publicList" && (
+            <div className="bloom">
+              <div className="flex items-center justify-between mb-4 gap-2">
+                <SectionBanner icon={Eye}>รายการจองทั้งหมด</SectionBanner>
+                <button
+                  onClick={loadSheetOrders}
+                  className="shrink-0 p-2 rounded-full"
+                  style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}
+                  aria-label="รีเฟรชข้อมูล"
+                >
+                  <RefreshCcw size={15} color={C.ink} />
+                </button>
+              </div>
+
+              <input
+                type="text"
+                value={orderSearch}
+                onChange={(e) => setOrderSearch(e.target.value)}
+                placeholder="พิมพ์ชื่อเพื่อค้นหา..."
+                className="w-full mb-3 px-4 py-2.5 rounded-lg text-sm"
+                style={{ background: C.paperLight, border: `1.5px solid ${C.kraftDark}`, color: C.ink }}
+              />
+
+              <div
+                className="mb-3 text-xs px-3 py-2 rounded-md"
+                style={{
+                  background: sheetError ? "#DC262622" : sheetOrders !== null ? C.ctaSage + "33" : C.amber + "22",
+                  color: sheetError ? "#DC2626" : sheetOrders !== null ? C.ctaTeal : C.amber,
+                }}
+              >
+                {sheetLoading
+                  ? "กำลังโหลดข้อมูล..."
+                  : sheetError
+                  ? `โหลดข้อมูลไม่สำเร็จ: ${sheetError}`
+                  : sheetOrders !== null
+                  ? `อัปเดตล่าสุดตอนนี้ (${sheetOrders.length} รายการ)`
+                  : "ยังไม่ได้เชื่อม Google Sheet"}
+              </div>
+
+              {(() => {
+                const filteredOrders = orderSearch.trim()
+                  ? displayOrders.filter((o) => (o.buyerName || "").toLowerCase().includes(orderSearch.trim().toLowerCase()))
+                  : displayOrders;
+                return filteredOrders.length === 0 ? (
+                  <div className="rounded-lg p-6 text-center text-sm" style={{ background: C.paperLight, border: `1.5px dashed ${C.kraftDark}`, color: C.inkSoft }}>
+                    {orderSearch.trim() ? "ไม่พบชื่อที่ค้นหา" : "ยังไม่มีคำสั่งซื้อ"}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {filteredOrders.map((o) => (
+                      <div key={o.code} className="rounded-lg p-3 flex items-center justify-between gap-2" style={{ background: C.paperLight, border: `1px solid ${C.kraftDark}` }}>
+                        <div className="min-w-0">
+                          <div className="font-bold" style={{ fontFamily: FONT_MONO, color: C.greenDark, fontSize: 12 }}>{o.code}</div>
+                          <div className="truncate" style={{ fontSize: 12, color: C.ink }}>{o.buyerName}{o.room ? ` · ${o.room}` : ""}</div>
+                        </div>
+                        <StatusBadge status={o.status} />
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           )}
 
@@ -1490,10 +1616,10 @@ function FlowerBookingPreview() {
                   </div>
                   <ChevronRight size={16} color={C.inkSoft} />
                 </button>
-                <button onClick={() => finalizeOrder("pending")} className="rounded-lg p-4 flex items-center gap-3 text-left" style={{ background: C.paperLight, border: `1.5px solid ${C.amber}` }}>
+                <button onClick={() => finalizeOrder("pending")} disabled={finalizing} className="rounded-lg p-4 flex items-center gap-3 text-left" style={{ background: C.paperLight, border: `1.5px solid ${C.amber}`, opacity: finalizing ? 0.6 : 1 }}>
                   <div className="p-2 rounded-md" style={{ background: C.amber + "22" }}><Wallet size={20} color={C.amber} /></div>
                   <div className="flex-1">
-                    <div className="font-semibold text-sm">{siteText.codOptionTitle}</div>
+                    <div className="font-semibold text-sm">{finalizing ? "กำลังออกเลขออเดอร์..." : siteText.codOptionTitle}</div>
                     <div className="text-xs" style={{ color: C.inkSoft }}>{siteText.codOptionDesc}</div>
                   </div>
                   <ChevronRight size={16} color={C.inkSoft} />
@@ -1532,8 +1658,8 @@ function FlowerBookingPreview() {
                   <RefreshCcw size={16} /> {siteText.qrRefreshButton}
                 </button>
               ) : (
-                <button onClick={() => finalizeOrder("paid")} className="w-full mt-5 py-3 rounded-lg font-semibold text-white" style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.greenDark})` }}>
-                  {siteText.qrPaidButton}
+                <button onClick={() => finalizeOrder("paid")} disabled={finalizing} className="w-full mt-5 py-3 rounded-lg font-semibold text-white" style={{ background: `linear-gradient(135deg, ${C.blue}, ${C.greenDark})`, opacity: finalizing ? 0.6 : 1 }}>
+                  {finalizing ? "กำลังออกเลขออเดอร์..." : siteText.qrPaidButton}
                 </button>
               )}
               <button onClick={() => setStep("payment")} className="w-full mt-2 py-2.5 rounded-lg text-sm" style={{ color: C.inkSoft }}>
