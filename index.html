@@ -1089,34 +1089,55 @@ function FlowerBookingPreview() {
     return Object.keys(e).length === 0;
   }
 
-  async function finalizeOrder(status) {
+   async function finalizeOrder(status) {
     if (finalizing) return;
     setFinalizing(true);
     const items = getCartItems(cart, packages);
+    const total = cartTotal(items);
+    const formSnapshot = { ...form };
+    const packageName = items.map((it) => `${it.pkg.name} ×${it.qty}`).join(", ");
+    const qty = items.reduce((sum, it) => sum + it.qty, 0);
 
-    // Ask the shared sheet how many orders already exist, so the number is unique
-    // across every visitor — not just "how many I've placed on this device."
-    let seq = orders.length + 1;
+    // Let the sheet assign the order number — it's the one source of truth everyone
+    // shares, so this is the only way to guarantee no two people ever get the same number.
+    let code = null;
     if (GOOGLE_SHEET_WEBHOOK_URL && !GOOGLE_SHEET_WEBHOOK_URL.includes("วาง URL")) {
       try {
-        const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL);
+        const res = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify({
+            packageName,
+            qty,
+            totalPrice: total,
+            buyerName: formSnapshot.name,
+            room: formSnapshot.room,
+            phone: formSnapshot.phone,
+            status,
+          }),
+        });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data)) seq = data.length + 1;
+          if (data && data.code) code = data.code;
         }
       } catch (err) {
-        console.error("Could not check current order count, using local count instead", err);
+        console.error("Order submission to sheet failed", err);
       }
     }
 
-    const order = { code: genOrderCode(seq), items, total: cartTotal(items), form: { ...form }, status, time: new Date() };
-    logOrderToSheet(order);
+    if (!code) {
+      // Only reached if the connection genuinely failed (e.g. offline). The "*" marks
+      // it clearly as unconfirmed so staff know to double-check it manually later —
+      // this never silently reuses SC001 again.
+      code = genOrderCode(orders.length + 1) + "*";
+    }
+
+    const order = { code, items, total, form: formSnapshot, status, time: new Date() };
     setOrders((o) => [order, ...o]);
     setCurrentOrder(order);
     setStep("success");
     setFinalizing(false);
   }
-
   function savePackage(draft) {
     setPackages((list) => {
       let next;
