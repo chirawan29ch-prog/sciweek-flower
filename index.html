@@ -832,7 +832,7 @@ function LabeledInput({ label, ...props }) {
 }
 
 function PackageEditSheet({ initial, onCancel, onSave, onDelete }) {
-  const isNew = !!initial.isNew;
+  const isNew = !initial.id;
   const [draft, setDraft] = useState({ ...initial });
   return (
     <Sheet title={isNew ? "เพิ่มแพ็กเกจดอกไม้" : "แก้ไขแพ็กเกจ"} onClose={onCancel}>
@@ -1089,7 +1089,7 @@ function FlowerBookingPreview() {
     return Object.keys(e).length === 0;
   }
 
-   async function finalizeOrder(status) {
+  async function finalizeOrder(status) {
     if (finalizing) return;
     setFinalizing(true);
     const items = getCartItems(cart, packages);
@@ -1138,14 +1138,17 @@ function FlowerBookingPreview() {
     setStep("success");
     setFinalizing(false);
   }
+
   function savePackage(draft) {
     setPackages((list) => {
       let next;
-      if (draft.isNew) {
+      const existingIndex = draft.id ? list.findIndex((p) => p.id === draft.id) : -1;
+      const { isNew, ...clean } = draft;
+      if (existingIndex === -1) {
         const newId = `pkg-${Date.now()}`;
-        next = [...list, { ...draft, id: newId }];
+        next = [...list, { ...clean, id: newId }];
       } else {
-        next = list.map((p) => (p.id === draft.id ? { ...draft } : p));
+        next = list.map((p) => (p.id === draft.id ? { ...clean } : p));
       }
       saveConfigToSheet(next, siteText);
       return next;
